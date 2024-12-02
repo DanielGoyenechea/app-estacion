@@ -1,0 +1,52 @@
+@extern('header')
+<link rel="stylesheet" href="views/static/css/styles.css{{PROJECT_MODE}}">
+<body>
+	<div class="titulo">
+		<h1>
+			app-estacion
+		</h1>
+	</div>
+	<div id="output"></div>
+
+	<script type="text/javascript">
+	const endpoint = 'https://mattprofe.com.ar/proyectos/app-estacion/datos.php?mode=list-stations';
+
+	fetch(endpoint)
+	  .then(response => {
+	    if (!response.ok) {
+	      throw new Error('Error al obtener los datos: ' + response.status);
+	    }
+	    return response.json();
+	  })
+	  .then(data => {
+	    console.log('Datos del endpoint:', data);
+
+	    const output = document.getElementById('output');
+	    output.innerHTML = ''; 
+
+	    data.forEach(station => {
+
+	      const card = document.createElement('a');
+	      card.href = "detalle/?chipid="+ station.chipid;
+	  		card.classList.add('carta'); 
+
+
+
+	      card.innerHTML = `
+	        <h3 class="tituloCarta">${station.apodo || 'Sin nombre'}</h3>
+	        <p><strong>cant de vistas:</strong> ${station.visitas || 'No disponible'}</p>
+	        <p><strong>Ubicación:</strong> ${station.ubicacion || 'No especificada'}</p>
+	      `;
+
+
+	      output.appendChild(card);
+	    });
+	  })
+	  .catch(error => {
+	    console.error('Error:', error);
+	    const output = document.getElementById('output');
+	    output.innerHTML = `<p style="color: red;">Ocurrió un error al obtener los datos.</p>`;
+	  });
+	</script>
+
+		@extern('footer')
